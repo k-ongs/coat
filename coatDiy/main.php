@@ -79,7 +79,7 @@
                                 $trace_info .= '()';
                             }
                         }
-                        $html .= '<div class="quote">' . $trace_info . '</div>';
+                        $html .= '<div class="quote">' . str_replace(kPathRoot, "/", $trace_info) . '</div>';
                     }
                 }
                 die(\coatDiy\main::getErrorHtml($e->getFile(), $e->getLine(), $e->getMessage(), $html));
@@ -98,8 +98,8 @@
         {
             $html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>错误信息</title><style>.block{margin:10px;background:#FFF;border-radius:4px;border:1px solid #f6f6f6;box-shadow:0 0 2px rgba(0,0,0,.05)}.block>.block-header{padding:8px 10px;border-bottom:1px solid #f6f6f6}.title{font-size:20px;font-weight:bold}.block>.block-body{padding:8px 10px;overflow-x:auto}.quote{padding:10px;font-size:14px;background-color:#f2f2f2;border-left:5px solid #db3a00;border-radius:0 2px 2px 0;margin:10px 0;word-wrap:break-word}.title2{font-size:14px;color:#999}</style></head><body style="background-color:#f1f1f1;"><div class="block"><div class="block-header">';
             $html .= '<span class="title">系统发生错误</span></div><div class="block-body"><div class="title2">错误位置：</div>';
-            $html .= '<div class="quote">/'.str_replace(kPathRoot, "", $file) . '(' . $line . ')</div><div class="title2">错误信息：</div>';
-            $html .= '<div class="quote">' . $str . '</div>';
+            $html .= '<div class="quote">'.str_replace(kPathRoot, "/", $file) . '(' . $line . ')</div><div class="title2">错误信息：</div>';
+            $html .= '<div class="quote">' . str_replace(kPathRoot, "/", $str) . '</div>';
             $html .= $other . '</div></div></body></html>';
             return $html;
         }
@@ -114,18 +114,23 @@
         //获取配置文件
         static public function getConfig($config_name)
         {
-
             $path = kPathConfig . $config_name . '.php';
             if(is_file($path))
             {
                 $config = include $path;
                 if(is_array($config)){
                     return $config;
-                }else{
-                    throw new \Exception('配置文件读取失败: ' . $config_name . '.php');
                 }
-            }else{
-                throw new \Exception('找不到配置文件: ' . $config_name . '.php');
             }
+            return false;
+        }
+
+        //获取配置文件
+        static public function getSysConfig($key)
+        {
+            
+            if(empty($_SERVER['config']['system']) || empty($_SERVER['config']['system'][$key]))
+                return false;
+            return $_SERVER['config']['system'][$key];
         }
     }

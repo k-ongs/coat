@@ -6,5 +6,6 @@
         'module' => 'index',            //默认模块
         'controller' => 'index',        //默认控制器
         'action' => 'index',            //默认方法
-        'page404' => '404.html',       //视图后缀
+        'route' => true,                //路由是否开启
+        'page404' => '404.html',        //视图后缀
     ];

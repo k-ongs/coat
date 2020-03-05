@@ -21,25 +21,43 @@
             $this -> action = $_SERVER['config']['system']['action'];
         }
 
+        private function routeCheck($url)
+        {
+            $rule = $this -> getConfig('route');
+            if($rule)
+            {
+                foreach ($rule as $key => $value) {
+                    $key = trim($key, '/');
+                    $value = trim($value, '/');
+                    if($key == substr($url, 0, strlen($key)))
+                        if(count(explode('/', $value)) < 4)
+                            return str_replace($key, $value, $url);
+                }
+            }
+            return $url;
+        }
+
         private function setRouteArgs()
         {
             $request_uri_array = explode('?', urldecode($_SERVER['REQUEST_URI']));
             $request_uri = trim(preg_replace('/(.*?\/)\/{1,}/i', '$1', $request_uri_array[0]), '/');
 
+            if($this -> getSysConfig('route'))
+                $request_uri = $this -> routeCheck($request_uri);
             $parameter_array = explode('/', $request_uri);
 
             if(!empty($parameter_array[0])){
-                if(Validator::isIntChar($parameter_array[0]))
+                if(Validator::isIntCharCN($parameter_array[0]))
                     $this -> module = $parameter_array[0];
             }
 
             if(!empty($parameter_array[1])){
-                if(Validator::isIntChar($parameter_array[1]))
+                if(Validator::isIntCharCN($parameter_array[1]))
                     $this -> controller = $parameter_array[1];
             }
 
             if(!empty($parameter_array[2])){
-                if(Validator::isIntChar($parameter_array[2]))
+                if(Validator::isIntCharCN($parameter_array[2]))
                     $this -> action = $parameter_array[2];
             }
 
