@@ -46,7 +46,7 @@
         {
             $request_uri_array = explode('?', urldecode($_SERVER['REQUEST_URI']));
             $request_uri = trim(preg_replace('/(.*?\/)\/{1,}/i', '$1', $request_uri_array[0]), '/');
-
+            $request_uri = rtrim($request_uri, '.html');
             if($this -> getSysConfig('route'))
                 $request_uri = $this -> routeCheck($request_uri);
             $parameter_array = explode('/', $request_uri);
