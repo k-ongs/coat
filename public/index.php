@@ -1,2 +1,2 @@
 <?PHP
-    require  '../coatDiy/start.php';
+    require  '../main/start.php';

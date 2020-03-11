@@ -7,5 +7,7 @@
         'controller' => 'index',        //默认控制器
         'action' => 'index',            //默认方法
         'route' => true,                //路由是否开启
+        'view_analysis' => true,        //视图解析是否开启
         'page404' => '404.html',        //视图后缀
+        'suffix' => '.html',        //视图后缀
     ];

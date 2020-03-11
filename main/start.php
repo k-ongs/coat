@@ -11,7 +11,7 @@
     //网站根目录路径
     defined('kPathRoot') or define('kPathRoot', dirname(__DIR__) . '/');
     //主要文件路径
-    defined('kPathMain') or define('kPathMain', kPathRoot . 'coatDiy/');
+    defined('kPathMain') or define('kPathMain', kPathRoot . 'main/');
     //缓存文件路径
     defined('kPathCache') or define('kPathCache', kPathRoot . 'cache/');
     //公共文件路径
@@ -37,8 +37,9 @@
     include kPathMain . 'main.php';
 
     //自动注册、错误处理
-    set_error_handler('\coatDiy\main::errorHandler');
-    set_exception_handler("\coatDiy\main::exceptionHandler");
-    spl_autoload_register('\coatDiy\main::load');
+    stream_wrapper_register("var", "\main\VariableStream");
+    set_error_handler('\main\main::errorHandler');
+    set_exception_handler("\main\main::exceptionHandler");
+    spl_autoload_register('\main\main::load');
 
-    \coatDiy\main::run();
+    \main\main::run();

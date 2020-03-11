@@ -5,7 +5,7 @@
      * 日  期：2019年9月22日
      */
 
-    namespace coatDiy;
+    namespace main;
     use \plugin\Validator;
 
     class route extends main
@@ -13,12 +13,13 @@
         private $module;
         private $controller;
         private $action;
+        private $load_path;
 
         public function __construct()
         {
-            $this -> module = $_SERVER['config']['system']['module'];
-            $this -> controller = $_SERVER['config']['system']['controller'];
-            $this -> action = $_SERVER['config']['system']['action'];
+            $this -> module = $this -> getSysConfig('module');
+            $this -> controller = $this -> getSysConfig('controller');
+            $this -> action = $this -> getSysConfig('action');
         }
 
         private function routeCheck($url)
@@ -26,12 +27,16 @@
             $rule = $this -> getConfig('route');
             if($rule)
             {
+                krsort($rule);
                 foreach ($rule as $key => $value) {
                     $key = trim($key, '/');
                     $value = trim($value, '/');
-                    if($key == substr($url, 0, strlen($key)))
-                        if(count(explode('/', $value)) < 4)
-                            return str_replace($key, $value, $url);
+                    if(preg_match('/^'.str_replace('/','\/', $key).'/', $url))
+                    {
+                        $url = preg_replace('/'.str_replace('/','\/', $key).'/', $value, $url);
+                        $url = preg_replace_callback('/\[(.*?)\]/', function ($matches) { return str_replace('/','\\', $matches[1]); }, $url);
+                        return $url;
+                    }
                 }
             }
             return $url;

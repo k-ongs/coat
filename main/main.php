@@ -5,7 +5,7 @@
      * 日  期：2019年9月22日
      */
 
-    namespace coatDiy;
+    namespace main;
 
     class main
     {
@@ -32,13 +32,14 @@
         static public function errorHandler($errno, $errstr, $errfile, $errline)
         {
             if($_SERVER['config']['system']['debug'])
-                die(\coatDiy\main::getErrorHtml($errfile, $errline, $errstr));
-            else{
+            {
+                die(\main\main::getErrorHtml($errfile, $errline, $errstr));
+            }else{
                 if(isset($_SERVER['config']['system']['page404']) && is_file($_SERVER['config']['system']['page404']))
                 {
                     die(file_get_contents($_SERVER['config']['system']['page404']));
                 }else{
-                    die(\coatDiy\main::getPage404());
+                    die(\main\main::getPage404());
                 }
             }
         }
@@ -82,13 +83,13 @@
                         $html .= '<div class="quote">' . str_replace(kPathRoot, "/", $trace_info) . '</div>';
                     }
                 }
-                die(\coatDiy\main::getErrorHtml($e->getFile(), $e->getLine(), $e->getMessage(), $html));
+                die(\main\main::getErrorHtml($e->getFile(), $e->getLine(), $e->getMessage(), $html));
             }else{
                 if(isset($_SERVER['config']['system']['page404']) && is_file($_SERVER['config']['system']['page404']))
                 {
                     die(file_get_contents($_SERVER['config']['system']['page404']));
                 }else{
-                    die(\coatDiy\main::getPage404());
+                    die(\main\main::getPage404());
                 }
             }
         }
@@ -104,7 +105,7 @@
             return $html;
         }
 
-        //生成错误信息html代码
+        //生成404页面代码
         static public function getPage404()
         {
             $html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>404</title><style>html,body{width: 100%;height: 100%;margin: 0;padding: 0;}</style></head><body><div style="display: table;width: 100%;height: 100%;"><div style="display: table-cell;text-align: center;vertical-align: middle;"><div style="font-size: 100px; font-weight:bold;">404</div><div>抱歉，您所访问的页面不存在，请重新加载!</div></div></div></body></html>';
@@ -125,7 +126,16 @@
             return false;
         }
 
-        //获取配置文件
+        //获取系统变量
+        static public function getSysVar($key)
+        {
+            
+            if(empty($_SERVER['system']) || empty($_SERVER['system'][$key]))
+                return false;
+            return $_SERVER['system'][$key];
+        }
+        
+        //获取系统配置信息
         static public function getSysConfig($key)
         {
             
@@ -133,4 +143,22 @@
                 return false;
             return $_SERVER['config']['system'][$key];
         }
+    }
+    
+    class VariableStream {
+        private $string;
+        private $position;
+    
+        public function stream_open($path, $mode, $options, &$opened_path) {
+            $this->string = str_replace('var://', '', $path);
+            $this->position = 0;
+            return true;
+        }
+        public function stream_read($count) {
+            $ret = substr($this->string, $this->position, $count);
+            $this->position += strlen($ret);
+            return $ret;
+        }
+        public function stream_eof() {}
+        public function stream_stat() {}
     }
