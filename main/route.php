@@ -1,12 +1,5 @@
 <?PHP
-    /*
-     * 操作者：bear
-     * 说  明：路由功能
-     * 日  期：2019年9月22日
-     */
-
     namespace main;
-    use \plugin\Validator;
 
     class route extends main
     {
@@ -17,11 +10,12 @@
 
         public function __construct()
         {
-            $this -> module = $this -> getSysConfig('module');
-            $this -> controller = $this -> getSysConfig('controller');
-            $this -> action = $this -> getSysConfig('action');
+            $this -> module = $this -> getSystem('module');
+            $this -> controller = $this -> getSystem('controller');
+            $this -> action = $this -> getSystem('action');
         }
 
+        // 路由验证
         private function routeCheck($url)
         {
             $rule = $this -> getConfig('route');
@@ -33,6 +27,7 @@
                     $value = trim($value, '/');
                     if(preg_match('/^'.str_replace('/','\/', $key).'/', $url))
                     {
+                        
                         $url = preg_replace('/'.str_replace('/','\/', $key).'/', $value, $url);
                         $url = preg_replace_callback('/\[(.*?)\]/', function ($matches) { return str_replace('/','\\', $matches[1]); }, $url);
                         return $url;
@@ -42,27 +37,29 @@
             return $url;
         }
 
+        // 设置路由参数
         private function setRouteArgs()
         {
             $request_uri_array = explode('?', urldecode($_SERVER['REQUEST_URI']));
             $request_uri = trim(preg_replace('/(.*?\/)\/{1,}/i', '$1', $request_uri_array[0]), '/');
-            $request_uri = rtrim($request_uri, '.html');
-            if($this -> getSysConfig('route'))
+            $request_uri = str_replace('.html', '', $request_uri);
+
+            if($this -> getSystem('route'))
                 $request_uri = $this -> routeCheck($request_uri);
             $parameter_array = explode('/', $request_uri);
 
             if(!empty($parameter_array[0])){
-                if(Validator::isIntCharCN($parameter_array[0]))
+                if($this -> isIntCharCN($parameter_array[0]))
                     $this -> module = $parameter_array[0];
             }
 
             if(!empty($parameter_array[1])){
-                if(Validator::isIntCharCN($parameter_array[1]))
+                if($this -> isIntCharCN($parameter_array[1]))
                     $this -> controller = $parameter_array[1];
             }
 
             if(!empty($parameter_array[2])){
-                if(Validator::isIntCharCN($parameter_array[2]))
+                if($this -> isIntCharCN($parameter_array[2]))
                     $this -> action = $parameter_array[2];
             }
 
@@ -76,6 +73,7 @@
             }
         }
 
+        // 加载控制器
         private function loadController(){
             $load_path = '\\project\\' . $this -> module . '\\' . $this -> controller;
             if($this -> module == '' || $this -> controller == '' || $this -> action == '')
@@ -84,9 +82,10 @@
             }
             $load = new $load_path();
             $action = $this -> action;
-            $_SERVER['system']['module'] = $this -> module;
-            $_SERVER['system']['controller'] = $this -> controller;
-            $_SERVER['system']['action'] = $this -> action;
+            $this -> setSystem('module', $this -> module);
+            $this -> setSystem('controller', $this -> controller);
+            $this -> setSystem('action', $this -> action);
+
             if(method_exists($load, $action) && is_callable(array($load ,  $action))){
                 return $load -> $action();
             }else{
@@ -94,12 +93,14 @@
             }
         }
 
+        // 执行路由
         public function routing(){
             $this -> setRouteArgs();
             $response = $this -> loadController();
 
             if(is_string($response))
             {
+                header("Content-type: text/html; charset=utf-8");
                 die($response);
             }
             if(is_array($response))
@@ -107,5 +108,9 @@
                 header('content-type:application/json;charset=utf-8');
                 die(json_encode($response,JSON_UNESCAPED_UNICODE));
             }
+        }
+
+        private function isIntCharCN($str){
+            return (preg_match('/^[\w<\x{4e00}-\x{9fa5}>]{1,}$/u', $str)===1 ? true : false);
         }
     }

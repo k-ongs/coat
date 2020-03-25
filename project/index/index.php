@@ -1,23 +1,11 @@
 <?PHP
 
 namespace project\index;
-use plugin\View;
 
-class index extends View
+class index
 {
     public function index()
     {
-        $this -> parameter('test', [1,2,3,4,5]);
-        // preg_match('/var[\s]*=[\s]*(\'|")(.*?)\1/i', 'var = "$_GET[123]"', $result_arg);
-        $this -> display();
-        // print_r($result_arg);
-    }
-
-    public function test()
-    {
-        // $cacheFile = new cacheFile();
-        // $cacheFile -> set('user','test');
-        // return $cacheFile -> get('user');
-        // // return $_SERVER;
+        return ['state'=>true, 'msg'=>'这个是默认方法'];   
     }
 }

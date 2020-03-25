@@ -1,45 +1,23 @@
 <?PHP
-    //
-    // 操作者：bear
-    // 说  明：入口文件
-    // 日  期：2019年12月21日
-    //
-
-    //默认头
-    header("Content-type: text/html; charset=utf-8");
-
+    namespace main;
     //网站根目录路径
-    defined('kPathRoot') or define('kPathRoot', dirname(__DIR__) . '/');
+    defined('ROOT') or define('ROOT', dirname(__DIR__) . '/');
     //主要文件路径
-    defined('kPathMain') or define('kPathMain', kPathRoot . 'main/');
+    defined('MAIN') or define('MAIN', ROOT . 'main/');
     //缓存文件路径
-    defined('kPathCache') or define('kPathCache', kPathRoot . 'cache/');
+    defined('CACHE') or define('CACHE', ROOT . 'cache/');
     //公共文件路径
-    defined('kPathPublic') or define('kPathPublic', kPathRoot . 'public/');
+    defined('PUBLIC') or define('PUBLIC', ROOT . 'public/');
     //插件文件路径
-    defined('kPathPlugin') or define('kPathPlugin', kPathRoot . 'plugin/');
+    defined('PLUGIN') or define('PLUGIN', ROOT . 'plugin/');
+    //第三方插件路径
+    defined('VENDOR') or define('VENDOR', ROOT . 'vendor/');
     //配置文件路径
-    defined('kPathConfig') or define('kPathConfig', kPathRoot . 'config/');
+    defined('CONFIG') or define('CONFIG', ROOT . 'config/');
     //项目文件路径
-    defined('kPathProject') or define('kPathProject', kPathRoot . 'project/');
+    defined('PROJECT') or define('PROJECT', ROOT . 'project/');
 
-    //载入系统配置文件
-    $_SERVER['config']['system'] = include kPathConfig . 'system.php';
-
-    if($_SERVER['config']['system']['debug']){
-         ini_set("display_errors", "On");
-         error_reporting(E_ALL | E_STRICT);
-    }else{
-        ini_set("display_errors", "Off");
-        error_reporting(0);
-    }
-
-    include kPathMain . 'main.php';
-
-    //自动注册、错误处理
-    stream_wrapper_register("var", "\main\VariableStream");
-    set_error_handler('\main\main::errorHandler');
-    set_exception_handler("\main\main::exceptionHandler");
-    spl_autoload_register('\main\main::load');
+    // 加载框架主文件
+    include(MAIN . 'main.php');
 
     \main\main::run();
