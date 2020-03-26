@@ -27,7 +27,6 @@
                     $value = trim($value, '/');
                     if(preg_match('/^'.str_replace('/','\/', $key).'/', $url))
                     {
-                        
                         $url = preg_replace('/'.str_replace('/','\/', $key).'/', $value, $url);
                         $url = preg_replace_callback('/\[(.*?)\]/', function ($matches) { return str_replace('/','\\', $matches[1]); }, $url);
                         return $url;

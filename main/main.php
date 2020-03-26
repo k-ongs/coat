@@ -37,7 +37,13 @@
         static public function autoload($class)
         {
             $class = str_replace('\\', "/", $class);
-            $path = ROOT . $class . '.php';
+            $path = ROOT . $class;
+            if(explode("/",$class)[0] == 'plugin')
+            {
+                $path = $path . '.class';
+            }
+            $path = $path . '.php';
+
             if(is_file($path))
             {
                 include($path);
@@ -119,7 +125,7 @@
             {
                 $file = str_replace(ROOT, "/", $file);
                 $file = str_replace('<', "&lt;", $file);
-                $file = str_replace('var://', "", $file);
+                $file = str_replace('view://', "", $file);
                 $html .= '<div class="quote">错误位置在如下代码第'.$line.'行</div>';
                 $html .= '<div class="code">'.$file.'</div>';
             }else{
@@ -171,7 +177,7 @@
         //获取配置信息
         static public function getConfig($config_name)
         {
-            $path = CONFIG . $config_name . '.php';
+            $path = CONFIG . $config_name . '.config.php';
             if(is_file($path))
             {
                 $config = include $path;
