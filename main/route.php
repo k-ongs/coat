@@ -28,7 +28,7 @@
                     if(preg_match('/^'.str_replace('/','\/', $key).'/', $url))
                     {
                         $url = preg_replace('/'.str_replace('/','\/', $key).'/', $value, $url);
-                        $url = preg_replace_callback('/\[(.*?)\]/', function ($matches) { return str_replace('/','\\', $matches[1]); }, $url);
+                        $url = preg_replace_callback('/\[(.*?)\]/', function ($matches) { return str_replace('/','分割线', $matches[1]); }, $url);
                         return $url;
                     }
                 }
@@ -49,17 +49,17 @@
 
             if(!empty($parameter_array[0])){
                 if($this -> isIntCharCN($parameter_array[0]))
-                    $this -> module = $parameter_array[0];
+                    $this -> module = str_replace('分割线','\\', $parameter_array[0]);
             }
 
             if(!empty($parameter_array[1])){
                 if($this -> isIntCharCN($parameter_array[1]))
-                    $this -> controller = $parameter_array[1];
+                    $this -> controller = str_replace('分割线','\\', $parameter_array[1]);
             }
 
             if(!empty($parameter_array[2])){
                 if($this -> isIntCharCN($parameter_array[2]))
-                    $this -> action = $parameter_array[2];
+                    $this -> action = str_replace('分割线','\\', $parameter_array[2]);
             }
 
             if(count($parameter_array) >= 5){
@@ -79,17 +79,21 @@
             {
                 throw new \Exception('路由出现严重错误!');
             }
+
             $load = new $load_path();
+
             $action = $this -> action;
+            
             $this -> setSystem('module', $this -> module);
             $this -> setSystem('controller', $this -> controller);
             $this -> setSystem('action', $this -> action);
-
+            
             if(method_exists($load, $action) && is_callable(array($load ,  $action))){
                 return $load -> $action();
             }else{
                 throw new \Exception('方法不存在：' . $action);
             }
+            
         }
 
         // 执行路由

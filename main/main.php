@@ -127,9 +127,9 @@
                 $file = str_replace('<', "&lt;", $file);
                 $file = str_replace('view://', "", $file);
                 $html .= '<div class="quote">错误位置在如下代码第'.$line.'行</div>';
-                $html .= '<div class="code">'.$file.'</div>';
+                $html .= '<div class="code">'.str_replace(ROOT, "/", $file).'</div>';
             }else{
-                $html .= '<div class="quote">'.$file.'(第'.$line.'行)</div>';
+                $html .= '<div class="quote">'.str_replace(ROOT, "/", $file).'(第'.$line.'行)</div>';
             }
             if(!empty($trace))
             {
@@ -171,6 +171,7 @@
                 }
             }
             $html .= ' </div></div></body></html>';
+            $html = str_replace(ROOT, "/", $html);
             return $html;
         }
 
@@ -186,6 +187,15 @@
                 }
             }
             return false;
+        }
+
+        //设置配置文件
+        static public function setConfig($name, $data)
+        {
+            $path = CONFIG . $name . '.config.php';
+            $text = '<?PHP return ' . var_export($data, true) . '; ?>';
+            $text = str_replace('\\\\','' , $text);
+            return file_put_contents($path, $text);
         }
 
         //设置全局变量
