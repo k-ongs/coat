@@ -1,6 +1,7 @@
 ##      日期            操作者         修改记录
 ## 2020年03月25日        bear          修改目录结构
 ## 2020年03月26日        bear          更改项目插件及配置文件命名格式
+## 2020年07月21日        bear          修改路由结构，配置文件格式
 
 ## 框架结构说明
 
@@ -15,7 +16,7 @@ public                  //公共文件
 plugin                  //框架插件文件
 vendor                  //第三方插件
 config                  //配置文件
-    └— system.php           //框架系统配置文件
+    └— route.config.php           //路由规则配置文件
 project                 //项目文件
     └— module               //模块
         └— controller.php           //控制器
@@ -55,7 +56,7 @@ project                 //项目文件
 
 7、所有系统变量、常量均为大写
 
-8、项目插件命名均为：插件名.class.php 格式，配置文件统一放入config文件夹里面，命名为：插件名.config.php，第三方类放入vendor文件夹中
+8、项目插件命名均为：插件名.class.php 格式，配置文件统一放入config文件夹里面，命名为：插件名.config.php，第三方类放入vendor文件夹中，使用main::vendor('类名')调用。
 
 9、需满足PSR-0规范即：
     1) 命名空间必须与绝对路径一致
@@ -63,3 +64,27 @@ project                 //项目文件
     3) 除去入口文件外，其他“.php”必须只有一个类
     4) php类文件必须自动载入，不采用include等
     5) 单一入口
+
+10、路由规则
+    使用正则表达，[str]匹配整数、字母、下划线和中文，[int]匹配整数，默认替换全部，例如：
+    
+    模块/控制器/方法/参数名/参数值/参数名/参数值
+
+    1) 设置默认为index模块，设置后访问其他木块必须添加路由
+        {
+            "^": "index",
+            "admin": "admin"
+        }
+    2) 替换所有test为index
+        {
+            "test": "index"
+        }
+    3) 替换模块test为模块index
+        {
+            "^test": "index"
+        }
+    3) 使用[str]和[int]
+        {
+            "api/[str]/[str]/[str]/[int]": "api/[$1/$2]/$3/id/$4"
+        }
+        访问url"/api/v1/test/get/12" 解析后得到 "api/[v1/test]/get/id/12"
