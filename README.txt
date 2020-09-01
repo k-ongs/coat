@@ -1,29 +1,29 @@
 ##      日期            操作者         修改记录
-## 2020年03月25日        bear          修改目录结构
-## 2020年03月26日        bear          更改项目插件及配置文件命名格式
-## 2020年07月21日        bear          修改路由结构，配置文件格式
+## 2020年03月25日        熊          修改目录结构
+## 2020年03月26日        熊          更改项目插件及配置文件命名格式
+## 2020年07月21日        熊          修改路由结构，配置文件格式
+## 2020年08月30日        熊          重构项目，PHP>=7
 
 ## 框架结构说明
-
-main                    //框架核心文件
-    ├— main.php             // 框架核心类
-    ├— route.php            // 框架路由类
-    └— start.php            // 框架入口文件
-cache                   //缓存文件
-public                  //公共文件
-    ├— .htaccess            //伪静态配置
-    └— index.php            //框架入口
-plugin                  //框架插件文件
-vendor                  //第三方插件
-config                  //配置文件
-    └— route.config.php           //路由规则配置文件
-project                 //项目文件
-    └— module               //模块
-        └— controller.php           //控制器
-
-
-
-
+├—
+├—coat              # 框架目录
+├   ├— core.php             # 核心文件
+├   └— main.php             # 框架入口文件
+├—public            # 公共目录
+├   ├— .htaccess            # Apache伪静态配置
+├   ├— .rewrite.conf        # Nginx伪静态配置
+├   ├— index.php            # 程序入口文件
+├—plugin            # 插件目录
+├    └— name.class.php      # 插件文件
+├—config            # 配置目录
+├    └— name.config.php     # 配置文件
+├—storage           # 缓存目录
+├—app               # 应用目录
+├    └— module              # 模块
+├    ├   └— controller.php          # 控制器
+├    ├       └— function method()          #方法
+├    ├— route.php           # 路由配置
+└    └— function.php        # 公共函数
 
 ## 代码规范
 
@@ -70,7 +70,7 @@ project                 //项目文件
     
     模块/控制器/方法/参数名/参数值/参数名/参数值
 
-    1) 设置默认为index模块，设置后访问其他木块必须添加路由
+    1) 设置默认为index模块，设置后访问其他模块必须添加路由
         {
             "^": "index",
             "admin": "admin"
@@ -85,6 +85,6 @@ project                 //项目文件
         }
     3) 使用[str]和[int]
         {
-            "api/[str]/[str]/[str]/[int]": "api/[$1/$2]/$3/id/$4"
+            "^api/[str]/[str]/[str]/[int]": "api/$1\$2/$3/id/$4"
         }
-        访问url"/api/v1/test/get/12" 解析后得到 "api/[v1/test]/get/id/12"
+        访问url"/api/v1/test/get/12" 解析后得到 "api/v1\test/get/id/12"
