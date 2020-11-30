@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签解析测试</title>
+</head>
+<body>
+    {{count($arr)}}
+
+    <br>
+    <if value="$arr" >
+        数组不为空
+    <else>
+        数组为空
+    </if>
+    <br>
+
+    <foreach name="[]" key="key" value="value">
+        {{$value . PHP_EOL}}
+    <else>
+        数组为空
+    </foreach>
+
+    <br>
+    <for name="i" start="0" end="7" step="1">
+        {{$arr[$i] . PHP_EOL}}
+    </for>
+</body>
+</html>
